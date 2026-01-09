@@ -1,0 +1,86 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="InitAllSettings" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="out_Config" Type="OutArgument(scg:Dictionary(x:String, x:Object))" />
+  </x:Members>
+  <mva:VisualBasic.Settings>
+    <x:Null />
+  </mva:VisualBasic.Settings>
+  <sap:VirtualizedContainerService.HintSize>1200,600</sap:VirtualizedContainerService.HintSize>
+  <sap2010:WorkflowViewState.IdRef>InitAllSettings_1</sap2010:WorkflowViewState.IdRef>
+  <TextExpression.NamespacesForImplementation>
+    <scg:List x:TypeArguments="x:String" Capacity="21">
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Validation</x:String>
+      <x:String>System.Activities.XamlIntegration</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Diagnostics</x:String>
+      <x:String>System.Drawing</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Net.Mail</x:String>
+      <x:String>System.Xml</x:String>
+      <x:String>System.Xml.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>System.Windows.Markup</x:String>
+    </scg:List>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <scg:List x:TypeArguments="AssemblyReference" Capacity="16">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xml.Linq</AssemblyReference>
+      <AssemblyReference>PresentationFramework</AssemblyReference>
+      <AssemblyReference>WindowsBase</AssemblyReference>
+      <AssemblyReference>PresentationCore</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+    </scg:List>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="InitAllSettings" sap:VirtualizedContainerService.HintSize="376,280" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <Assign DisplayName="Init Dictionary" sap:VirtualizedContainerService.HintSize="334,60">
+      <Assign.To>
+        <OutArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)">[out_Config]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)">[New Dictionary(Of String, Object)]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <Sequence DisplayName="Add Config Values" sap:VirtualizedContainerService.HintSize="334,66">
+       <sap:WorkflowViewStateService.ViewState>
+        <scg:Dictionary x:TypeArguments="x:String, x:Object">
+          <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+          <x:Boolean x:Key="IsPinned">False</x:Boolean>
+        </scg:Dictionary>
+      </sap:WorkflowViewStateService.ViewState>
+      <!-- Configuration Values -->
+      <Assign DisplayName="Add JobRole"><Assign.To><OutArgument x:TypeArguments="x:Object">[out_Config("JobRole")]</OutArgument></Assign.To><Assign.Value><InArgument x:TypeArguments="x:Object">["Junior Developer"]</InArgument></Assign.Value></Assign>
+      <Assign DisplayName="Add Location"><Assign.To><OutArgument x:TypeArguments="x:Object">[out_Config("Location")]</OutArgument></Assign.To><Assign.Value><InArgument x:TypeArguments="x:Object">["Cluj Napoca"]</InArgument></Assign.Value></Assign>
+      <Assign DisplayName="Add MinSalary"><Assign.To><OutArgument x:TypeArguments="x:Object">[out_Config("MinSalary")]</OutArgument></Assign.To><Assign.Value><InArgument x:TypeArguments="x:Object">[50000]</InArgument></Assign.Value></Assign>
+      <Assign DisplayName="Add BlacklistedCompanies"><Assign.To><OutArgument x:TypeArguments="x:Object">[out_Config("BlacklistedCompanies")]</OutArgument></Assign.To><Assign.Value><InArgument x:TypeArguments="x:Object">["Bad Corp,Evildoers Inc"]</InArgument></Assign.Value></Assign>
+      <Assign DisplayName="Add SenderEmail"><Assign.To><OutArgument x:TypeArguments="x:Object">[out_Config("SenderEmail")]</OutArgument></Assign.To><Assign.Value><InArgument x:TypeArguments="x:Object">["david_blajan523@yahoo.com"]</InArgument></Assign.Value></Assign>
+      <Assign DisplayName="Add SenderPassword"><Assign.To><OutArgument x:TypeArguments="x:Object">[out_Config("SenderPassword")]</OutArgument></Assign.To><Assign.Value><InArgument x:TypeArguments="x:Object">["oadpjeieqepjrjwm"]</InArgument></Assign.Value></Assign>
+      <Assign DisplayName="Add ReceiverEmail"><Assign.To><OutArgument x:TypeArguments="x:Object">[out_Config("ReceiverEmail")]</OutArgument></Assign.To><Assign.Value><InArgument x:TypeArguments="x:Object">["david_blajan523@yahoo.com"]</InArgument></Assign.Value></Assign>
+      <Assign DisplayName="Add MailServer"><Assign.To><OutArgument x:TypeArguments="x:Object">[out_Config("MailServer")]</OutArgument></Assign.To><Assign.Value><InArgument x:TypeArguments="x:Object">["smtp.mail.yahoo.com"]</InArgument></Assign.Value></Assign>
+      <Assign DisplayName="Add MailPort"><Assign.To><OutArgument x:TypeArguments="x:Object">[out_Config("MailPort")]</OutArgument></Assign.To><Assign.Value><InArgument x:TypeArguments="x:Object">[465]</InArgument></Assign.Value></Assign>
+    </Sequence>
+  </Sequence>
+</Activity>

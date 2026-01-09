@@ -1,0 +1,117 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Process" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_TransactionItem" Type="InArgument(sd:DataRow)" />
+    <x:Property Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:Object))" />
+    <x:Property Name="io_FilteredJobs" Type="InOutArgument(sd:DataTable)" />
+  </x:Members>
+  <mva:VisualBasic.Settings>
+    <x:Null />
+  </mva:VisualBasic.Settings>
+  <sap:VirtualizedContainerService.HintSize>1200,1000</sap:VirtualizedContainerService.HintSize>
+  <sap2010:WorkflowViewState.IdRef>ProcessTransaction_1</sap2010:WorkflowViewState.IdRef>
+  <TextExpression.NamespacesForImplementation>
+    <scg:List x:TypeArguments="x:String" Capacity="21">
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Validation</x:String>
+      <x:String>System.Activities.XamlIntegration</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Diagnostics</x:String>
+      <x:String>System.Drawing</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Net.Mail</x:String>
+      <x:String>System.Xml</x:String>
+      <x:String>System.Xml.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>System.Windows.Markup</x:String>
+    </scg:List>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <scg:List x:TypeArguments="AssemblyReference" Capacity="20">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xml.Linq</AssemblyReference>
+      <AssemblyReference>PresentationFramework</AssemblyReference>
+      <AssemblyReference>WindowsBase</AssemblyReference>
+      <AssemblyReference>PresentationCore</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.Composition</AssemblyReference>
+      <AssemblyReference>System.ServiceModel</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualStudio.Services.Common</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+    </scg:List>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence sap2010:Annotation.AnnotationText="Invoke major steps of the business process, which are usually implemented by multiple subworkflows.&#xA;&#xA;If a BusinessRuleException is thrown, the transaction is skipped. &#xA;If validation passes, add to FilteredJobs." DisplayName="Process" sap:VirtualizedContainerService.HintSize="526,900" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Name="CompanyName" />
+      <Variable x:TypeArguments="x:String" Name="SalaryStr" />
+      <Variable x:TypeArguments="x:Double" Name="SalaryVal" />
+    </Sequence.Variables>
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+        <x:Boolean x:Key="IsAnnotationDocked">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+
+    <Assign DisplayName="Assign Company Name" sap:VirtualizedContainerService.HintSize="484,60" sap2010:WorkflowViewState.IdRef="Assign_1">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[CompanyName]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[in_TransactionItem("Company").ToString]</InArgument>
+      </Assign.Value>
+    </Assign>
+
+    <If Condition="[in_Config(&quot;BlacklistedCompanies&quot;).ToString.Contains(CompanyName)]" DisplayName="If Company Blacklisted" sap:VirtualizedContainerService.HintSize="484,208" sap2010:WorkflowViewState.IdRef="If_1">
+      <If.Then>
+        <Throw DisplayName="Throw Business Rule - Blacklisted" Exception="[New BusinessRuleException(&quot;Company is blacklisted: &quot; + CompanyName)]" sap:VirtualizedContainerService.HintSize="200,22" sap2010:WorkflowViewState.IdRef="Throw_1" />
+      </If.Then>
+    </If>
+
+
+    
+
+
+    <If Condition="[String.IsNullOrWhiteSpace(in_TransactionItem(&quot;JobTitle&quot;).ToString)]" DisplayName="Fix Title" sap:VirtualizedContainerService.HintSize="484,208">
+      <If.Then>
+        <Assign DisplayName="Assign N/A Title" sap:VirtualizedContainerService.HintSize="262,60">
+          <Assign.To><OutArgument x:TypeArguments="x:Object">[in_TransactionItem("JobTitle")]</OutArgument></Assign.To>
+          <Assign.Value><InArgument x:TypeArguments="x:Object">["N/A"]</InArgument></Assign.Value>
+        </Assign>
+      </If.Then>
+    </If>
+    <If Condition="[String.IsNullOrWhiteSpace(in_TransactionItem(&quot;Company&quot;).ToString)]" DisplayName="Fix Company" sap:VirtualizedContainerService.HintSize="484,208">
+      <If.Then>
+        <Assign DisplayName="Assign N/A Company" sap:VirtualizedContainerService.HintSize="262,60">
+          <Assign.To><OutArgument x:TypeArguments="x:Object">[in_TransactionItem("Company")]</OutArgument></Assign.To>
+          <Assign.Value><InArgument x:TypeArguments="x:Object">["N/A"]</InArgument></Assign.Value>
+        </Assign>
+      </If.Then>
+    </If>
+
+    <If Condition="[(in_TransactionItem(&quot;JobTitle&quot;).ToString = &quot;N/A&quot; And in_TransactionItem(&quot;Company&quot;).ToString = &quot;N/A&quot;) OrElse in_TransactionItem(&quot;JobTitle&quot;).ToString.Trim.Equals(in_TransactionItem(&quot;Company&quot;).ToString.Trim)]" DisplayName="Final Validate" sap:VirtualizedContainerService.HintSize="484,208">
+      <If.Then>
+         <ui:LogMessage DisplayName="Log Partial Row" Level="Warn" Message="[&quot;Skipping unusable row&quot;]" />
+      </If.Then>
+      <If.Else>
+         <ui:AddDataRow DataRow="{x:Null}" ArrayRow="[{in_TransactionItem(&quot;JobTitle&quot;), in_TransactionItem(&quot;Company&quot;)}]" DataTable="[io_FilteredJobs]" DisplayName="Add Valid Job to Filtered DT" sap:VirtualizedContainerService.HintSize="200,22" />
+      </If.Else>
+    </If>
+    
+  </Sequence>
+</Activity>
