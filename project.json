@@ -4,10 +4,10 @@
   "description": "Automated Job Hunt Assistant using REFramework structure.",
   "main": "Main.xaml",
   "dependencies": {
-    "UiPath.Excel.Activities": "[2.20.1]",
-    "UiPath.Mail.Activities": "[1.18.2]",
-    "UiPath.System.Activities": "[23.4.2]",
-    "UiPath.UIAutomation.Activities": "[23.4.4]"
+    "UiPath.Excel.Activities": "[2.24.4]",
+    "UiPath.Mail.Activities": "[1.24.16]",
+    "UiPath.System.Activities": "[24.10.8]",
+    "UiPath.UIAutomation.Activities": "[25.10.24]"
   },
   "webServices": [],
   "entitiesStores": [],

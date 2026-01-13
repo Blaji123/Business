@@ -12,6 +12,11 @@
       "Path": "Main.xaml",
       "SortBy": 0,
       "VariablesSectionElementsOrder": [
+        "LocationsString&Sequence_1",
+        "LocationsArray&Sequence_1",
+        "dt_TempScrape&Sequence_1",
+        "newRow&Sequence_4",
+        "titleBuffer&Sequence_1",
         "Config&Sequence_1",
         "dt_JobData&Sequence_1",
         "dt_FilteredJobs&Sequence_1"
@@ -42,6 +47,16 @@
         "in_ReceiverEmail",
         "in_FilteredJobs",
         "in_Config"
+      ],
+      "ConstantsSectionElementsOrder": null,
+      "AddedNamespaces": null
+    },
+    {
+      "Path": "Workflows/InitAllSettings.xaml",
+      "SortBy": 0,
+      "VariablesSectionElementsOrder": [],
+      "ArgumentsSectionElementsOrder": [
+        "out_Config"
       ],
       "ConstantsSectionElementsOrder": null,
       "AddedNamespaces": null

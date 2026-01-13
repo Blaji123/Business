@@ -1,57 +1,21 @@
-01/09/2026 19:33:52 => [Debug] Execution started for project: SmartJobHuntAssistant
-01/09/2026 19:33:53 => [Info] SmartJobHuntAssistant execution started
-01/09/2026 19:33:53 => [Info] Starting Smart Job Hunt Assistant...
-01/09/2026 19:34:28 => [Error] Send SMTP Mail Message: The SMTP server has unexpectedly disconnected.
-01/09/2026 19:34:28 => [Error] Invoke SendEmailReport: The SMTP server has unexpectedly disconnected.
-01/09/2026 19:34:28 => [Info] SmartJobHuntAssistant execution ended in: 00:00:34
-01/09/2026 19:34:28 => [Error] MailKit.Net.Smtp.SmtpProtocolException: The SMTP server has unexpectedly disconnected.   at MailKit.Net.Smtp.SmtpStream.<ReadAheadAsync>d__39.MoveNext() in D:\src\MailKit\MailKit\Net\Smtp\SmtpStream.cs:line 260
---- End of stack trace from previous location where exception was thrown ---
-   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
-   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
-   at MailKit.Net.Smtp.SmtpStream.<ReadResponseAsync>d__46.MoveNext() in D:\src\MailKit\MailKit\Net\Smtp\SmtpStream.cs:line 456
---- End of stack trace from previous location where exception was thrown ---
-   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
-   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
-   at MailKit.Net.Smtp.SmtpStream.ReadResponse(CancellationToken cancellationToken) in D:\src\MailKit\MailKit\Net\Smtp\SmtpStream.cs:line 554
-   at MailKit.Net.Smtp.SmtpClient.<SendCommandAsync>d__85.MoveNext() in D:\src\MailKit\MailKit\Net\Smtp\SmtpClient.cs:line 650
---- End of stack trace from previous location where exception was thrown ---
-   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
-   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
-   at System.Runtime.CompilerServices.TaskAwaiter.ValidateEnd(Task task)
-   at MailKit.Net.Smtp.SmtpClient.<AuthenticateAsync>d__95.MoveNext() in D:\src\MailKit\MailKit\Net\Smtp\SmtpClient.cs:line 1068
---- End of stack trace from previous location where exception was thrown ---
-   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
-   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
-   at MailKit.Net.Smtp.SmtpClient.Authenticate(Encoding encoding, ICredentials credentials, CancellationToken cancellationToken) in D:\src\MailKit\MailKit\Net\Smtp\SmtpClient.cs:line 1176
-   at MailKit.MailService.Authenticate(ICredentials credentials, CancellationToken cancellationToken) in D:\src\MailKit\MailKit\MailService.cs:line 1237
-   at UiPath.Mail.UiPMailKit.Extensions.IMailServiceExtensions.Authenticate(IMailService service, UserSettings userSettings, CancellationToken cancellationToken)
-   at UiPath.Mail.MimeMailService.SendSMTPMail(MimeMessage mimemessage, UserSettings userSettings, ServerSettings serverSettings, SecureSocketEncryption secureConnection, CancellationToken cancellationToken, Boolean authenticateFirst)
-   at UiPath.Mail.MimeMailService.SendSMTPMail(MailMessage mailMessage, UserSettings userSettings, Receiver receiver, ServerSettings serverSettings, SecureSocketEncryption secureConnection, List`1 attachments, CancellationToken ct, Boolean isNewMessage, String body)
-   at UiPath.Mail.SMTP.Activities.SendMail.<>c__DisplayClass56_0.<SendMailTask>b__0()
-   at System.Threading.Tasks.Task.InnerInvoke()
-   at System.Threading.Tasks.Task.Execute()
---- End of stack trace from previous location where exception was thrown ---
-   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
-   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
-   at System.Runtime.CompilerServices.TaskAwaiter.ValidateEnd(Task task)
-   at UiPath.Mail.SMTP.Activities.SendMail.<SendMailTask>d__56.MoveNext()
---- End of stack trace from previous location where exception was thrown ---
-   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
-   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
-   at UiPath.Mail.Activities.Extensions.TaskExtensions.<TimeoutAfter>d__2.MoveNext()
---- End of stack trace from previous location where exception was thrown ---
-   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
-   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
-   at UiPath.Mail.Activities.SendMailActivity.<ExecuteAsync>d__43.MoveNext()
---- End of stack trace from previous location where exception was thrown ---
-   at UiPath.Shared.Activities.AsyncTaskCodeActivityImplementation.EndExecute(AsyncCodeActivityContext context, IAsyncResult result)
-   at UiPath.Shared.Activities.AsyncTaskCodeActivity.EndExecute(AsyncCodeActivityContext context, IAsyncResult result)
-   at System.Activities.AsyncCodeActivity.System.Activities.IAsyncCodeActivity.FinishExecution(AsyncCodeActivityContext context, IAsyncResult result)
-   at System.Activities.AsyncCodeActivity.CompleteAsyncCodeActivityData.CompleteAsyncCodeActivityWorkItem.Execute(ActivityExecutor executor, BookmarkManager bookmarkManager)
---- End of stack trace from previous location where exception was thrown ---
-   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
-   at UiPath.Executor.BaseRunner.EndExecute(IAsyncResult result)
-   at UiPath.Executor.InProcessRunner.EndExecute(IAsyncResult result)
-   at UiPath.Core.Activities.ExecutorInvokeActivity.EndExecute(AsyncCodeActivityContext context, IAsyncResult result)
-   at System.Activities.AsyncCodeActivity.System.Activities.IAsyncCodeActivity.FinishExecution(AsyncCodeActivityContext context, IAsyncResult result)
-   at System.Activities.AsyncCodeActivity.CompleteAsyncCodeActivityData.CompleteAsyncCodeActivityWorkItem.Execute(ActivityExecutor executor, BookmarkManager bookmarkManager)
+01/13/2026 18:22:21 => [Debug] Execution started for project: SmartJobHuntAssistant
+01/13/2026 18:22:22 => [Info] SmartJobHuntAssistant execution started
+01/13/2026 18:22:22 => [Info] Starting Smart Job Hunt Assistant...
+01/13/2026 18:22:23 => [Info] Healing agent configuration.
+01/13/2026 18:22:34 => [Info] Processing Row - Title: 'Junior Developer (nonJava)', Company: 'Junior Developer (nonJava)'
+01/13/2026 18:22:34 => [Warning] Skipping unusable row
+01/13/2026 18:22:34 => [Info] Processing Row - Title: 'Generix Group', Company: 'Generix Group'
+01/13/2026 18:22:34 => [Warning] Skipping unusable row
+01/13/2026 18:22:34 => [Info] Processing Row - Title: 'Candidați cu ușurință', Company: 'Candidați cu ușurință'
+01/13/2026 18:22:34 => [Warning] Skipping unusable row
+01/13/2026 18:22:34 => [Info] Processing Row - Title: 'Vedeți toate locurile de muncă locuri de munca Generix Group - Cluj-Napoca - locuri de munca Développeur (H/F) in Cluj-Napoca', Company: 'Vedeți toate locurile de muncă locuri de munca Generix Group - Cluj-Napoca - locuri de munca Développeur (H/F) in Cluj-Napoca'
+01/13/2026 18:22:34 => [Warning] Skipping unusable row
+01/13/2026 18:22:34 => [Info] Processing Row - Title: 'Junior Developer (nonJava)', Company: 'Junior Developer (nonJava)'
+01/13/2026 18:22:34 => [Warning] Skipping unusable row
+01/13/2026 18:22:34 => [Info] Processing Row - Title: 'Generix Group', Company: 'Generix Group'
+01/13/2026 18:22:34 => [Warning] Skipping unusable row
+01/13/2026 18:22:34 => [Info] Processing Row - Title: 'Candidați cu ușurință', Company: 'Candidați cu ușurință'
+01/13/2026 18:22:34 => [Warning] Skipping unusable row
+01/13/2026 18:22:34 => [Info] Processing Row - Title: 'Vedeți toate locurile de muncă locuri de munca Generix Group - Cluj-Napoca - locuri de munca Développeur (H/F) in Cluj-Napoca', Company: 'Vedeți toate locurile de muncă locuri de munca Generix Group - Cluj-Napoca - locuri de munca Développeur (H/F) in Cluj-Napoca'
+01/13/2026 18:22:34 => [Warning] Skipping unusable row
+01/13/2026 18:22:36 => [Info] SmartJobHuntAssistant execution ended in: 00:00:13

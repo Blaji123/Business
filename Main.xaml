@@ -55,6 +55,10 @@
       <Variable x:TypeArguments="scg:Dictionary(x:String, x:Object)" Name="Config" />
       <Variable x:TypeArguments="sd:DataTable" Name="dt_JobData" />
       <Variable x:TypeArguments="sd:DataTable" Name="dt_FilteredJobs" />
+      <Variable x:TypeArguments="x:String" Name="titleBuffer" />
+      <Variable x:TypeArguments="x:String" Name="LocationsString" />
+      <Variable x:TypeArguments="s:String[]" Name="LocationsArray" />
+      <Variable x:TypeArguments="sd:DataTable" Name="dt_TempScrape" />
     </Sequence.Variables>
     <sap:WorkflowViewStateService.ViewState>
       <scg:Dictionary x:TypeArguments="x:String, x:Object">
@@ -67,13 +71,42 @@
         <OutArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="out_Config">[Config]</OutArgument>
       </ui:InvokeWorkflowFile.Arguments>
     </ui:InvokeWorkflowFile>
-    <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" ContinueOnError="{x:Null}" DisplayName="Invoke ScrapeJobData" sap:VirtualizedContainerService.HintSize="512,87" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_2" UnSafe="False" WorkflowFileName="Workflows\ScrapeJobData.xaml">
-      <ui:InvokeWorkflowFile.Arguments>
-        <InArgument x:TypeArguments="x:String" x:Key="in_JobRole">[Config("JobRole").ToString]</InArgument>
-        <InArgument x:TypeArguments="x:String" x:Key="in_Location">[Config("Location").ToString]</InArgument>
-        <OutArgument x:TypeArguments="sd:DataTable" x:Key="out_dt_JobData">[dt_JobData]</OutArgument>
-      </ui:InvokeWorkflowFile.Arguments>
-    </ui:InvokeWorkflowFile>
+
+    <!-- Multi-Location Logic -->
+    <ui:InputDialog Options="{x:Null}" OptionsString="{x:Null}" DisplayName="Ask For Locations" Label="Enter locations separated by comma (e.g. Cluj Napoca, Bucharest):" Title="Job Locations" IsPassword="False" sap:VirtualizedContainerService.HintSize="512,238">
+      <ui:InputDialog.Result>
+        <OutArgument x:TypeArguments="x:String">[LocationsString]</OutArgument>
+      </ui:InputDialog.Result>
+    </ui:InputDialog>
+    <Assign DisplayName="Split Locations"><Assign.To><OutArgument x:TypeArguments="s:String[]">[LocationsArray]</OutArgument></Assign.To><Assign.Value><InArgument x:TypeArguments="s:String[]">[LocationsString.Split(","c)]</InArgument></Assign.Value></Assign>
+    
+    <Assign DisplayName="Init Master DT"><Assign.To><OutArgument x:TypeArguments="sd:DataTable">[dt_JobData]</OutArgument></Assign.To><Assign.Value><InArgument x:TypeArguments="sd:DataTable">[New System.Data.DataTable]</InArgument></Assign.Value></Assign>
+    
+    <ui:ForEach x:TypeArguments="x:String" CurrentIndex="{x:Null}" DisplayName="For Each Location" Values="[LocationsArray]" sap:VirtualizedContainerService.HintSize="512,600">
+      <ui:ForEach.Body>
+        <ActivityAction x:TypeArguments="x:String">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="x:String" Name="loc" />
+          </ActivityAction.Argument>
+          <Sequence DisplayName="Scrape Location" sap:VirtualizedContainerService.HintSize="376,400">
+             <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" ContinueOnError="{x:Null}" DisplayName="Invoke ScrapeJobData" UnSafe="False" WorkflowFileName="Workflows\ScrapeJobData.xaml">
+               <ui:InvokeWorkflowFile.Arguments>
+                 <InArgument x:TypeArguments="x:String" x:Key="in_JobRole">[Config("JobRole").ToString]</InArgument>
+                 <InArgument x:TypeArguments="x:String" x:Key="in_Location">[loc.Trim]</InArgument>
+                 <OutArgument x:TypeArguments="sd:DataTable" x:Key="out_dt_JobData">[dt_TempScrape]</OutArgument>
+               </ui:InvokeWorkflowFile.Arguments>
+             </ui:InvokeWorkflowFile>
+             <ui:MergeDataTable Destination="[dt_JobData]" DisplayName="Merge Into Master" MissingSchemaAction="Add" Source="[dt_TempScrape]" />
+             <ui:CloseApplication ContinueOnError="True" DisplayName="Close Browser (Interactable)" sap:VirtualizedContainerService.HintSize="334,68">
+                <ui:CloseApplication.Target>
+                  <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" Selector="&lt;html app='msedge.exe' title='*Indeed*' /&gt;" TimeoutMS="3000" WaitForReady="INTERACTIVE" />
+                </ui:CloseApplication.Target>
+             </ui:CloseApplication>
+          </Sequence>
+        </ActivityAction>
+      </ui:ForEach.Body>
+    </ui:ForEach>
+
     <ui:WriteRange AddHeaders="True" DataTable="[dt_JobData]" DisplayName="Debug: Write Raw Scraped Data" sap:VirtualizedContainerService.HintSize="512,115" SheetName="Sheet1" StartingCell="A1" WorkbookPath="debug_raw_scraped.xlsx" />
     <Assign DisplayName="Init FilteredJobs" sap:VirtualizedContainerService.HintSize="512,60" sap2010:WorkflowViewState.IdRef="Assign_1">
       <Assign.To>
@@ -89,53 +122,68 @@
           <ActivityAction.Argument>
             <DelegateInArgument x:TypeArguments="sd:DataRow" Name="row" />
           </ActivityAction.Argument>
-          <Sequence DisplayName="Process Body" sap:VirtualizedContainerService.HintSize="476,380" sap2010:WorkflowViewState.IdRef="Sequence_2">
-            <sap:WorkflowViewStateService.ViewState>
-              <scg:Dictionary x:TypeArguments="x:String, x:Object">
-                <x:Boolean x:Key="IsExpanded">True</x:Boolean>
-              </scg:Dictionary>
-            </sap:WorkflowViewStateService.ViewState>
-            <TryCatch DisplayName="Try Process" sap:VirtualizedContainerService.HintSize="434,266" sap2010:WorkflowViewState.IdRef="TryCatch_1">
-              <TryCatch.Try>
-                <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" ContinueOnError="{x:Null}" DisplayName="Invoke Process" sap:VirtualizedContainerService.HintSize="334,87" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_3" UnSafe="False" WorkflowFileName="Workflows\Process.xaml">
-                  <ui:InvokeWorkflowFile.Arguments>
-                    <InArgument x:TypeArguments="sd:DataRow" x:Key="in_TransactionItem">[row]</InArgument>
-                    <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[Config]</InArgument>
-                    <InOutArgument x:TypeArguments="sd:DataTable" x:Key="io_FilteredJobs">[dt_FilteredJobs]</InOutArgument>
-                  </ui:InvokeWorkflowFile.Arguments>
-                </ui:InvokeWorkflowFile>
-              </TryCatch.Try>
-              <TryCatch.Catches>
-                <Catch x:TypeArguments="ui:BusinessRuleException" sap:VirtualizedContainerService.HintSize="400,104" sap2010:WorkflowViewState.IdRef="Catch`1_1">
-                  <sap:WorkflowViewStateService.ViewState>
-                    <scg:Dictionary x:TypeArguments="x:String, x:Object">
-                      <x:Boolean x:Key="IsExpanded">True</x:Boolean>
-                      <x:Boolean x:Key="IsPinned">False</x:Boolean>
-                    </scg:Dictionary>
-                  </sap:WorkflowViewStateService.ViewState>
-                  <ActivityAction x:TypeArguments="ui:BusinessRuleException">
-                    <ActivityAction.Argument>
-                      <DelegateInArgument x:TypeArguments="ui:BusinessRuleException" Name="exception" />
-                    </ActivityAction.Argument>
-                    <ui:LogMessage DisplayName="Log Business Exception" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Warn" Message="[&quot;Business Rule Exception: &quot; + exception.Message]" />
-                  </ActivityAction>
-                </Catch>
-                <Catch x:TypeArguments="s:Exception" sap:VirtualizedContainerService.HintSize="400,21" sap2010:WorkflowViewState.IdRef="Catch`1_2">
-                  <sap:WorkflowViewStateService.ViewState>
-                    <scg:Dictionary x:TypeArguments="x:String, x:Object">
-                      <x:Boolean x:Key="IsExpanded">False</x:Boolean>
-                      <x:Boolean x:Key="IsPinned">False</x:Boolean>
-                    </scg:Dictionary>
-                  </sap:WorkflowViewStateService.ViewState>
-                  <ActivityAction x:TypeArguments="s:Exception">
-                    <ActivityAction.Argument>
-                      <DelegateInArgument x:TypeArguments="s:Exception" Name="exception" />
-                    </ActivityAction.Argument>
-                    <ui:LogMessage DisplayName="Log System Exception" sap2010:WorkflowViewState.IdRef="LogMessage_3" Level="Error" Message="[&quot;System Error: &quot; + exception.Message]" />
-                  </ActivityAction>
-                </Catch>
-              </TryCatch.Catches>
-            </TryCatch>
+          <Sequence DisplayName="Reconstruct And Process" sap:VirtualizedContainerService.HintSize="476,600">
+             <If Condition="[String.IsNullOrEmpty(titleBuffer)]" DisplayName="If Waiting For Title">
+               <If.Then>
+                  <Sequence DisplayName="Check If Title Is Valid">
+                      <!-- Basic check: If it contains 'locuri' or 'mult' it's likely junk -->
+                      <If Condition="[Not row(0).ToString.Contains(&quot;locuri de munca&quot;) And Not row(0).ToString.Contains(&quot;Toate&quot;)]">
+                          <If.Then>
+                              <Assign DisplayName="Buffer Title"><Assign.To><OutArgument x:TypeArguments="x:String">[titleBuffer]</OutArgument></Assign.To><Assign.Value><InArgument x:TypeArguments="x:String">[row(0).ToString]</InArgument></Assign.Value></Assign>
+                          </If.Then>
+                      </If>
+                  </Sequence>
+               </If.Then>
+               <If.Else>
+                  <Sequence DisplayName="Have Title, Get Company">
+                      <!-- We have a title, so this row MUST be the company (or junk) -->
+                      <!-- If it is junk, we might want to discard both or just this? -->
+                      <!-- User says: 1st row title, 2nd row company. So we trust it. -->
+                       <Sequence DisplayName="Reconstruct Row">
+                           <Sequence.Variables>
+                               <Variable x:TypeArguments="sd:DataRow" Name="newRow" />
+                           </Sequence.Variables>
+                           <Assign DisplayName="Create New Row"><Assign.To><OutArgument x:TypeArguments="sd:DataRow">[newRow]</OutArgument></Assign.To><Assign.Value><InArgument x:TypeArguments="sd:DataRow">[dt_FilteredJobs.NewRow()]</InArgument></Assign.Value></Assign>
+                           <Assign DisplayName="Set Title"><Assign.To><OutArgument x:TypeArguments="x:Object">[newRow("JobTitle")]</OutArgument></Assign.To><Assign.Value><InArgument x:TypeArguments="x:Object">[titleBuffer]</InArgument></Assign.Value></Assign>
+                           <Assign DisplayName="Set Company"><Assign.To><OutArgument x:TypeArguments="x:Object">[newRow("Company")]</OutArgument></Assign.To><Assign.Value><InArgument x:TypeArguments="x:Object">[row(0).ToString]</InArgument></Assign.Value></Assign>
+                           
+                           <!-- Reset Buffer -->
+                           <Assign DisplayName="Reset Buffer"><Assign.To><OutArgument x:TypeArguments="x:String">[titleBuffer]</OutArgument></Assign.To><Assign.Value><InArgument x:TypeArguments="x:String">[Nothing]</InArgument></Assign.Value></Assign>
+
+                           <!-- Invoke Process with specific reconstructed row -->
+                            <TryCatch DisplayName="Try Process" sap:VirtualizedContainerService.HintSize="434,266">
+                              <TryCatch.Try>
+                                <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" ContinueOnError="{x:Null}" DisplayName="Invoke Process" sap:VirtualizedContainerService.HintSize="334,87" UnSafe="False" WorkflowFileName="Workflows\Process.xaml">
+                                  <ui:InvokeWorkflowFile.Arguments>
+                                    <InArgument x:TypeArguments="sd:DataRow" x:Key="in_TransactionItem">[newRow]</InArgument>
+                                    <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[Config]</InArgument>
+                                    <InOutArgument x:TypeArguments="sd:DataTable" x:Key="io_FilteredJobs">[dt_FilteredJobs]</InOutArgument>
+                                  </ui:InvokeWorkflowFile.Arguments>
+                                </ui:InvokeWorkflowFile>
+                              </TryCatch.Try>
+                              <TryCatch.Catches>
+                                <Catch x:TypeArguments="ui:BusinessRuleException" sap:VirtualizedContainerService.HintSize="400,104">
+                                  <ActivityAction x:TypeArguments="ui:BusinessRuleException">
+                                    <ActivityAction.Argument>
+                                      <DelegateInArgument x:TypeArguments="ui:BusinessRuleException" Name="exception" />
+                                    </ActivityAction.Argument>
+                                    <ui:LogMessage DisplayName="Log Business Exception" Level="Warn" Message="[&quot;Business Rule Exception: &quot; + exception.Message]" />
+                                  </ActivityAction>
+                                </Catch>
+                                <Catch x:TypeArguments="s:Exception" sap:VirtualizedContainerService.HintSize="400,21">
+                                  <ActivityAction x:TypeArguments="s:Exception">
+                                    <ActivityAction.Argument>
+                                      <DelegateInArgument x:TypeArguments="s:Exception" Name="exception" />
+                                    </ActivityAction.Argument>
+                                    <ui:LogMessage DisplayName="Log System Exception" Level="Error" Message="[&quot;System Error: &quot; + exception.Message]" />
+                                  </ActivityAction>
+                                </Catch>
+                              </TryCatch.Catches>
+                            </TryCatch>
+                       </Sequence>
+                  </Sequence>
+               </If.Else>
+             </If>
           </Sequence>
         </ActivityAction>
       </ui:ForEachRow.Body>

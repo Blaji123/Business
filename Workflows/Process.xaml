@@ -87,6 +87,8 @@
     
 
 
+    <ui:LogMessage DisplayName="Log Row Details" Level="Info" Message="[&quot;Processing Row - Title: '&quot; + in_TransactionItem(&quot;JobTitle&quot;).ToString + &quot;', Company: '&quot; + in_TransactionItem(&quot;Company&quot;).ToString + &quot;'&quot;]" />
+    
     <If Condition="[String.IsNullOrWhiteSpace(in_TransactionItem(&quot;JobTitle&quot;).ToString)]" DisplayName="Fix Title" sap:VirtualizedContainerService.HintSize="484,208">
       <If.Then>
         <Assign DisplayName="Assign N/A Title" sap:VirtualizedContainerService.HintSize="262,60">
