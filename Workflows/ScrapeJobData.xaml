@@ -110,6 +110,17 @@
                 </ui:Target>
               </ui:ExtractData.Target>
             </ui:ExtractData>
+            
+            <If Condition="[out_dt_JobData IsNot Nothing AndAlso out_dt_JobData.Rows.Count &gt; 0]" DisplayName="Remove Duplicate Last Row" sap:VirtualizedContainerService.HintSize="484,230">
+              <If.Then>
+                <InvokeMethod DisplayName="Remove Last Row" MethodName="RemoveAt">
+                   <InvokeMethod.TargetObject>
+                     <InArgument x:TypeArguments="sd:DataRowCollection">[out_dt_JobData.Rows]</InArgument>
+                   </InvokeMethod.TargetObject>
+                   <InArgument x:TypeArguments="x:Int32">[out_dt_JobData.Rows.Count - 1]</InArgument>
+                </InvokeMethod>
+              </If.Then>
+            </If>
           </Sequence>
         </ActivityAction>
       </ui:OpenBrowser.Body>

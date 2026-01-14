@@ -12,10 +12,11 @@
       "Path": "Main.xaml",
       "SortBy": 0,
       "VariablesSectionElementsOrder": [
+        "newRow&Sequence_5",
+        "isDuplicate&Sequence_5",
         "LocationsString&Sequence_1",
         "LocationsArray&Sequence_1",
         "dt_TempScrape&Sequence_1",
-        "newRow&Sequence_4",
         "titleBuffer&Sequence_1",
         "Config&Sequence_1",
         "dt_JobData&Sequence_1",
@@ -57,6 +58,22 @@
       "VariablesSectionElementsOrder": [],
       "ArgumentsSectionElementsOrder": [
         "out_Config"
+      ],
+      "ConstantsSectionElementsOrder": null,
+      "AddedNamespaces": null
+    },
+    {
+      "Path": "Workflows/Process.xaml",
+      "SortBy": 0,
+      "VariablesSectionElementsOrder": [
+        "CompanyName&Sequence_1",
+        "SalaryStr&Sequence_1",
+        "SalaryVal&Sequence_1"
+      ],
+      "ArgumentsSectionElementsOrder": [
+        "in_TransactionItem",
+        "in_Config",
+        "io_FilteredJobs"
       ],
       "ConstantsSectionElementsOrder": null,
       "AddedNamespaces": null

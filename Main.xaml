@@ -96,6 +96,7 @@
                  <OutArgument x:TypeArguments="sd:DataTable" x:Key="out_dt_JobData">[dt_TempScrape]</OutArgument>
                </ui:InvokeWorkflowFile.Arguments>
              </ui:InvokeWorkflowFile>
+             
              <ui:MergeDataTable Destination="[dt_JobData]" DisplayName="Merge Into Master" MissingSchemaAction="Add" Source="[dt_TempScrape]" />
              <ui:CloseApplication ContinueOnError="True" DisplayName="Close Browser (Interactable)" sap:VirtualizedContainerService.HintSize="334,68">
                 <ui:CloseApplication.Target>
@@ -127,7 +128,7 @@
                <If.Then>
                   <Sequence DisplayName="Check If Title Is Valid">
                       <!-- Basic check: If it contains 'locuri' or 'mult' it's likely junk -->
-                      <If Condition="[Not row(0).ToString.Contains(&quot;locuri de munca&quot;) And Not row(0).ToString.Contains(&quot;Toate&quot;)]">
+                      <If Condition="[Not row(0).ToString.ToLower.Contains(&quot;locuri de munca&quot;) And Not row(0).ToString.ToLower.Contains(&quot;toate&quot;) And Not row(0).ToString.ToLower.Contains(&quot;candida&quot;)]">
                           <If.Then>
                               <Assign DisplayName="Buffer Title"><Assign.To><OutArgument x:TypeArguments="x:String">[titleBuffer]</OutArgument></Assign.To><Assign.Value><InArgument x:TypeArguments="x:String">[row(0).ToString]</InArgument></Assign.Value></Assign>
                           </If.Then>
@@ -142,44 +143,58 @@
                        <Sequence DisplayName="Reconstruct Row">
                            <Sequence.Variables>
                                <Variable x:TypeArguments="sd:DataRow" Name="newRow" />
+                               <Variable x:TypeArguments="x:Boolean" Name="isDuplicate" />
                            </Sequence.Variables>
-                           <Assign DisplayName="Create New Row"><Assign.To><OutArgument x:TypeArguments="sd:DataRow">[newRow]</OutArgument></Assign.To><Assign.Value><InArgument x:TypeArguments="sd:DataRow">[dt_FilteredJobs.NewRow()]</InArgument></Assign.Value></Assign>
-                           <Assign DisplayName="Set Title"><Assign.To><OutArgument x:TypeArguments="x:Object">[newRow("JobTitle")]</OutArgument></Assign.To><Assign.Value><InArgument x:TypeArguments="x:Object">[titleBuffer]</InArgument></Assign.Value></Assign>
-                           <Assign DisplayName="Set Company"><Assign.To><OutArgument x:TypeArguments="x:Object">[newRow("Company")]</OutArgument></Assign.To><Assign.Value><InArgument x:TypeArguments="x:Object">[row(0).ToString]</InArgument></Assign.Value></Assign>
+                           
+                           <!-- Check for Duplicates -->
+                           <Assign DisplayName="Check Duplicate"><Assign.To><OutArgument x:TypeArguments="x:Boolean">[isDuplicate]</OutArgument></Assign.To><Assign.Value><InArgument x:TypeArguments="x:Boolean">[dt_FilteredJobs.Select("JobTitle = '" + titleBuffer.Trim.Replace("'", "''") + "' AND Company = '" + row(0).ToString.Trim.Replace("'", "''") + "'").Length > 0]</InArgument></Assign.Value></Assign>
+
+                           <If Condition="[Not isDuplicate]" DisplayName="If Not Duplicate">
+                             <If.Then>
+                               <Sequence DisplayName="Add Row Sequence">
+                                   <Assign DisplayName="Create New Row"><Assign.To><OutArgument x:TypeArguments="sd:DataRow">[newRow]</OutArgument></Assign.To><Assign.Value><InArgument x:TypeArguments="sd:DataRow">[dt_FilteredJobs.NewRow()]</InArgument></Assign.Value></Assign>
+                                   <Assign DisplayName="Set Title"><Assign.To><OutArgument x:TypeArguments="x:Object">[newRow("JobTitle")]</OutArgument></Assign.To><Assign.Value><InArgument x:TypeArguments="x:Object">[titleBuffer]</InArgument></Assign.Value></Assign>
+                                   <Assign DisplayName="Set Company"><Assign.To><OutArgument x:TypeArguments="x:Object">[newRow("Company")]</OutArgument></Assign.To><Assign.Value><InArgument x:TypeArguments="x:Object">[row(0).ToString]</InArgument></Assign.Value></Assign>
+        
+                                   <!-- Invoke Process with specific reconstructed row -->
+                                    <TryCatch DisplayName="Try Process" sap:VirtualizedContainerService.HintSize="434,266">
+                                      <TryCatch.Try>
+                                        <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" ContinueOnError="{x:Null}" DisplayName="Invoke Process" sap:VirtualizedContainerService.HintSize="334,87" UnSafe="False" WorkflowFileName="Workflows\Process.xaml">
+                                          <ui:InvokeWorkflowFile.Arguments>
+                                            <InArgument x:TypeArguments="sd:DataRow" x:Key="in_TransactionItem">[newRow]</InArgument>
+                                            <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[Config]</InArgument>
+                                            <InOutArgument x:TypeArguments="sd:DataTable" x:Key="io_FilteredJobs">[dt_FilteredJobs]</InOutArgument>
+                                          </ui:InvokeWorkflowFile.Arguments>
+                                        </ui:InvokeWorkflowFile>
+                                      </TryCatch.Try>
+                                      <TryCatch.Catches>
+                                        <Catch x:TypeArguments="ui:BusinessRuleException" sap:VirtualizedContainerService.HintSize="400,104">
+                                          <ActivityAction x:TypeArguments="ui:BusinessRuleException">
+                                            <ActivityAction.Argument>
+                                              <DelegateInArgument x:TypeArguments="ui:BusinessRuleException" Name="exception" />
+                                            </ActivityAction.Argument>
+                                            <ui:LogMessage DisplayName="Log Business Exception" Level="Warn" Message="[&quot;Business Rule Exception: &quot; + exception.Message]" />
+                                          </ActivityAction>
+                                        </Catch>
+                                        <Catch x:TypeArguments="s:Exception" sap:VirtualizedContainerService.HintSize="400,21">
+                                          <ActivityAction x:TypeArguments="s:Exception">
+                                            <ActivityAction.Argument>
+                                              <DelegateInArgument x:TypeArguments="s:Exception" Name="exception" />
+                                            </ActivityAction.Argument>
+                                            <ui:LogMessage DisplayName="Log System Exception" Level="Error" Message="[&quot;System Error: &quot; + exception.Message]" />
+                                          </ActivityAction>
+                                        </Catch>
+                                      </TryCatch.Catches>
+                                    </TryCatch>
+                               </Sequence>
+                             </If.Then>
+                             <If.Else>
+                                <ui:LogMessage DisplayName="Log Duplicate" Level="Warn" Message="[&quot;Duplicate Skipped: &quot; + titleBuffer + &quot; at &quot; + row(0).ToString]" />
+                             </If.Else>
+                           </If>
                            
                            <!-- Reset Buffer -->
                            <Assign DisplayName="Reset Buffer"><Assign.To><OutArgument x:TypeArguments="x:String">[titleBuffer]</OutArgument></Assign.To><Assign.Value><InArgument x:TypeArguments="x:String">[Nothing]</InArgument></Assign.Value></Assign>
-
-                           <!-- Invoke Process with specific reconstructed row -->
-                            <TryCatch DisplayName="Try Process" sap:VirtualizedContainerService.HintSize="434,266">
-                              <TryCatch.Try>
-                                <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" ContinueOnError="{x:Null}" DisplayName="Invoke Process" sap:VirtualizedContainerService.HintSize="334,87" UnSafe="False" WorkflowFileName="Workflows\Process.xaml">
-                                  <ui:InvokeWorkflowFile.Arguments>
-                                    <InArgument x:TypeArguments="sd:DataRow" x:Key="in_TransactionItem">[newRow]</InArgument>
-                                    <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[Config]</InArgument>
-                                    <InOutArgument x:TypeArguments="sd:DataTable" x:Key="io_FilteredJobs">[dt_FilteredJobs]</InOutArgument>
-                                  </ui:InvokeWorkflowFile.Arguments>
-                                </ui:InvokeWorkflowFile>
-                              </TryCatch.Try>
-                              <TryCatch.Catches>
-                                <Catch x:TypeArguments="ui:BusinessRuleException" sap:VirtualizedContainerService.HintSize="400,104">
-                                  <ActivityAction x:TypeArguments="ui:BusinessRuleException">
-                                    <ActivityAction.Argument>
-                                      <DelegateInArgument x:TypeArguments="ui:BusinessRuleException" Name="exception" />
-                                    </ActivityAction.Argument>
-                                    <ui:LogMessage DisplayName="Log Business Exception" Level="Warn" Message="[&quot;Business Rule Exception: &quot; + exception.Message]" />
-                                  </ActivityAction>
-                                </Catch>
-                                <Catch x:TypeArguments="s:Exception" sap:VirtualizedContainerService.HintSize="400,21">
-                                  <ActivityAction x:TypeArguments="s:Exception">
-                                    <ActivityAction.Argument>
-                                      <DelegateInArgument x:TypeArguments="s:Exception" Name="exception" />
-                                    </ActivityAction.Argument>
-                                    <ui:LogMessage DisplayName="Log System Exception" Level="Error" Message="[&quot;System Error: &quot; + exception.Message]" />
-                                  </ActivityAction>
-                                </Catch>
-                              </TryCatch.Catches>
-                            </TryCatch>
                        </Sequence>
                   </Sequence>
                </If.Else>
